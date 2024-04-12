@@ -6,53 +6,38 @@ You can use it to run exams or labs by following the instructions below or use  
 
 ### Run the docker container
 ```
-sudo docker run -it viktoruj/runner
+sudo docker run --rm -it -v ~/.aws/:/root/.aws/ -v ~/learn/k8s/ckad-pg:/root/cks -w /root/cks viktoruj/runner
 
-```
-### Clone the git repo
-```
-git clone https://github.com/ViktorUJ/cks.git
-
-cd cks
-```
-### Update S3 bucket
-```
-#vim terraform/environments/terragrunt.hcl
-
-
-locals {
-  region                 = "eu-north-1"
-  backend_region         = "eu-north-1"
-  backend_bucket         = "sre-learning-platform-state-backet"  # update to your own name
-  backend_dynamodb_table = "${local.backend_bucket}-lock"
-}
-
-```
-### Set the aws key
-```
-export AWS_ACCESS_KEY_ID=Your_Access_Key
-export AWS_SECRET_ACCESS_KEY=Your_Secred_Access_Key
 ```
 
 ### Run your scenario
 
 #### For single environment
 ````
-TASK=01 make run_cka_mock
-````
-#### For multiple users or multiple environments
-
-````
-USER_ID='user1' ENV_ID='01' TASK=01 make run_cka_mock
+TASK=01 make run_ckad_mock
 ````
 
 ### Delete your scenario
 
 #### For single environment
 ```
-TASK=01 make delete_cka_mock
+TASK=01 make delete_ckad_mock
 ```
-#### For multiple users or multiple environments
-```
-USER_ID='user1' ENV_ID='01' TASK=01 make delete_cka_mock
-```
+
+  [Video instruction for launching **CKAD mock exam**](https://youtu.be/7X4Y9QhbTsk)
+
+### mock  CKAD exam
+- choose [a mock exam](tasks%2Fckad%2Fmock)  number
+- change **ubuntu_version** in ``{mock_number}/env.hcl`` if you need
+- change instance type from ``spot`` to ``ondemand`` in  ``{mock_number}/env.hcl`` if you need
+- create mock  CKAD exam ``TASK={mock_number} make run_ckad_mock`` or ``TASK={mock_number} make run_ckad_mock_clean`` if you'd like  to run with **clean** terragrunt cache
+- find ``worker_pc_ip`` in ``terraform output``
+- connect to ``worker_pc_ip``  with your ssh key and user ``ubuntu``
+- open questions list ``{mock_number}/README.MD`` and do tasks
+- use ``ssh  {kubernetes_nodename}`` from  work pc to connect to node
+- run ``time_left`` on work pc to check time
+- run ``check_result`` on work pc to check result
+- delete mock  CKAD exam `make delete_ckad_mock`
+- find exam solutions in ``{mock_number}/worker/files/solutions``  [mock 1 solutions](tasks%2Fckad%2Fmock%2F01%2Fworker%2Ffiles%2Fsolutions)   and [video](https://youtu.be/yQK7Ca8d-yw)
+- find exam tests in ``{mock_number}/worker/files/tests.bats``
+</details>
